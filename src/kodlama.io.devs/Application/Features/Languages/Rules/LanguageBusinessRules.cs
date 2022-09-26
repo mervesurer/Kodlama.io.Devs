@@ -22,8 +22,8 @@ namespace Application.Features.Languages.Rules
 
         public async Task LanguageCanNotBeDublicateted(string name)
         {
-            IPaginate<Language> result = await _languageRepository.GetListAsync(lang => lang.Name == name);
-            if (result.Items.Any())
+            Language? result = await _languageRepository.GetAsync(lang => lang.Name == name);
+            if (result != null)
                 throw new BusinessException("Language name exists.");
         }
 
