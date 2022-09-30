@@ -4,13 +4,16 @@ using Application.Features.Languages.Commands.UpdateLanguage;
 using Application.Features.Languages.Dtos;
 using Application.Features.Languages.Models;
 using Application.Features.Languages.Queries.GetListLanguage;
+using Application.Features.Languages.Queries.GetListLanguageByDynamic;
 using Application.Features.Technologies.Commands.CreateTechnology;
 using Application.Features.Technologies.Commands.DeleteTechnology;
 using Application.Features.Technologies.Commands.UpdateTechnology;
 using Application.Features.Technologies.Dtos;
 using Application.Features.Technologies.Models;
 using Application.Features.Technologies.Queries.GetListTechnology;
+using Application.Features.Technologies.Queries.GetListTechnologyByDynamic;
 using Core.Application.Requests;
+using Core.Persistence.Dynamic;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
@@ -46,6 +49,15 @@ namespace WebAPI.Controllers
             GetListTechnologyQuery getListTechnologyQuery = new() { PageRequest = pageRequest };
             TechnologyListModel result = await Mediator.Send(getListTechnologyQuery);
             return Ok(result);
+        }
+
+        [HttpPost("GetList/ByDynamic")]
+        public async Task<ActionResult> GetListByDynamic([FromQuery] PageRequest pageRequest, [FromBody] Dynamic dynamic)
+        {
+            GetListTechnologyByDynamicQuery getListByDynamiTechnologyQuery = new GetListTechnologyByDynamicQuery { PageRequest = pageRequest, Dynamic = dynamic };
+            TechnologyListModel result = await Mediator.Send(getListByDynamiTechnologyQuery);
+            return Ok(result);
+
         }
     }
 }
