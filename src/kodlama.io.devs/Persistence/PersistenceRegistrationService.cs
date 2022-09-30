@@ -26,6 +26,7 @@ namespace Persistence
             services.AddScoped<IUserOperationClaimRepository, UserOperationClaimRepository>();
             services.AddScoped<IOperationClaimRepository, OperationClaimRepository>();
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+            services.AddScoped<IGitHubProfileRepository, GitHubProfileRepository>();
                 
             return services;
         }
