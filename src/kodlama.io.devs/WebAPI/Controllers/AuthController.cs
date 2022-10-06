@@ -1,5 +1,6 @@
 ﻿using Application.Features.Authorization.Commands.AuthLogin;
 using Application.Features.Authorization.Commands.AuthRegister;
+using Core.Security.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
@@ -9,10 +10,16 @@ namespace WebAPI.Controllers
     public class AuthController : BaseController
     {
         [HttpPost("Register")]
-        public async Task<IActionResult> Register([FromBody] AuthorizationRegisterCommand authRegisterCommand)
+        public async Task<IActionResult> Register([FromBody] UserForRegisterDto userForRegisterDto)
         {
-            var result = await Mediator.Send(authRegisterCommand);
-            return Created("", result);
+            AuthorizationRegisterCommand registerCommand = new()
+            {
+                UserForRegisterDto = userForRegisterDto,
+                IpAdress = GetIpAddress()
+            };
+
+            var result = await Mediator.Send(registerCommand);
+            return Created("", result.AccessToken);
         }
 
         [HttpPost("Login")]

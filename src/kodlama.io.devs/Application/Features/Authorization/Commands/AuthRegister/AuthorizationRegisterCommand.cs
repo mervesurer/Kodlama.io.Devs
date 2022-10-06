@@ -1,6 +1,7 @@
 ﻿using Application.Features.Authorization.Dtos;
 using Application.Features.Authorization.Rules;
 using Application.Services;
+using Application.Services.AuthService;
 using Core.Security.Dtos;
 using Core.Security.Entities;
 using Core.Security.Enums;
@@ -19,19 +20,20 @@ namespace Application.Features.Authorization.Commands.AuthRegister
     public class AuthorizationRegisterCommand : IRequest<AuthRegisterDto>
     {
         public UserForRegisterDto UserForRegisterDto { get; set; }
+        public string IpAdress { get; set; }
 
         public class AuthorizationRegisterCommandHandler : IRequestHandler<AuthorizationRegisterCommand, AuthRegisterDto>
         {
             private readonly IUserRepository _userRepository;
-            private readonly ITokenHelper _tokenHelper;
+            private readonly IAuthService _authService;
             private readonly IOperationClaimRepository _operationClaimRepository;
             private readonly IUserOperationClaimRepository _userOperationClaimRepository;
             private readonly AuthBusinessRules _authBusinessRules;
 
-            public AuthorizationRegisterCommandHandler(IUserRepository userRepository, ITokenHelper tokenHelper, IOperationClaimRepository operationClaimRepository, IUserOperationClaimRepository userOperationClaimRepository, AuthBusinessRules authBusinessRules)
+            public AuthorizationRegisterCommandHandler(IUserRepository userRepository, IAuthService authService, IOperationClaimRepository operationClaimRepository, IUserOperationClaimRepository userOperationClaimRepository, AuthBusinessRules authBusinessRules)
             {
                 _userRepository = userRepository;
-                _tokenHelper = tokenHelper;
+                _authService = authService;
                 _operationClaimRepository = operationClaimRepository;
                 _userOperationClaimRepository = userOperationClaimRepository;
                 _authBusinessRules = authBusinessRules;
@@ -64,9 +66,16 @@ namespace Application.Features.Authorization.Commands.AuthRegister
                     include: p => p.Include(c => c.OperationClaim),
                     cancellationToken: cancellationToken);
 
-                var authRegisterDto = new AuthRegisterDto();
+                AccessToken createdAccessToken = await _authService.CreateAccessToken(newUser);
+                RefreshToken createdRefreshToken = await _authService.CreateRefreshToken(newUser, request.IpAdress);
+                RefreshToken addedRefreshToken = await _authService.AddRefreshToken(createdRefreshToken);
 
-                authRegisterDto.AccessToken = _tokenHelper.CreateToken(newUser, userClaims.Items.Select(p => p.OperationClaim).ToList());
+                AuthRegisterDto authRegisterDto = new()
+                {
+                    AccessToken = createdAccessToken,
+                    RefreshToken = createdRefreshToken
+                };
+
                 return authRegisterDto;
             }
         }
