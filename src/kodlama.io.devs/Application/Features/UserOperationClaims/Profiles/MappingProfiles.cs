@@ -30,7 +30,8 @@ namespace Application.Features.UserOperationClaims.Profiles
             CreateMap<UserOperationClaim, DeletedUserOperationClaimDto>().ReverseMap();
             CreateMap<IPaginate<UserOperationClaim>, UserOperationClaimListModel>().ReverseMap();
             CreateMap<UserOperationClaim, UserOperationClaimListDto>()
-                .ForMember(c => c.Username, opt => opt.MapFrom(c => c.User.FirstName))
+                .ForMember(c => c.NameSurname, opt => opt.MapFrom(c => c.User.FirstName + " " +c.User.LastName))
+                .ForMember(c => c.Email, opt => opt.MapFrom(c => c.User.Email))
                 .ForMember(c => c.OperationClaimName, opt => opt.MapFrom(c => c.OperationClaim.Name))
                 .ReverseMap();
         }
