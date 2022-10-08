@@ -7,8 +7,16 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Folder Include="Features\Languages\Constants\" />
-		<Folder Include="Features\Technologies\Constants\" />
+	  <Compile Remove="Features\Languages\Constants\**" />
+	  <Compile Remove="Features\Technologies\Constants\**" />
+	  <EmbeddedResource Remove="Features\Languages\Constants\**" />
+	  <EmbeddedResource Remove="Features\Technologies\Constants\**" />
+	  <None Remove="Features\Languages\Constants\**" />
+	  <None Remove="Features\Technologies\Constants\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Features\UserOperationClaims\Rules\" />
 	</ItemGroup>
 
 	<ItemGroup>
